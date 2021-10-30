@@ -54,6 +54,6 @@ def try_params( n_iterations, params ):
 	params_ = dict( params )
 	params_.pop( 'scaler' )
 	
-	clf = SGD(n_iter_ = n_iterations, **params_ )
+	clf = SGD(max_iter = n_iterations, **params_ )
 	
 	return train_and_eval_sklearn_regressor( clf, local_data )
