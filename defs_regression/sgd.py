@@ -1,10 +1,10 @@
 "function (and parameter space) definitions for hyperband"
 "regression with linear SGD regressor"
 
-from common_defs import *
+from hyperband.common_defs import *
 
 # a dict with x_train, y_train, x_test, y_test
-from load_data_for_regression import data
+from hyperband.load_data_for_regression import data
 
 from sklearn.preprocessing import StandardScaler, RobustScaler, MinMaxScaler, MaxAbsScaler
 from sklearn.linear_model import SGDRegressor as SGD
@@ -37,7 +37,7 @@ def get_params():
 def try_params( n_iterations, params ):
 	
 	n_iterations = int( round( n_iterations ))
-	print "n_iterations:", n_iterations
+	print ("n_iterations:", n_iterations)
 	pprint( params )
 	
 	if params['scaler']:
@@ -54,6 +54,6 @@ def try_params( n_iterations, params ):
 	params_ = dict( params )
 	params_.pop( 'scaler' )
 	
-	clf = SGD( n_iter = n_iterations, **params_ )
+	clf = SGD(n_iter_ = n_iterations, **params_ )
 	
 	return train_and_eval_sklearn_regressor( clf, local_data )
