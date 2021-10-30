@@ -7,7 +7,7 @@ from time import time
 from pprint import pprint
 
 from sklearn.metrics import roc_auc_score as AUC, log_loss, accuracy_score as accuracy
-from sklearn.metrics import mean_squared_error as MSE, mean_absolute_error as MAE
+from sklearn.metrics import mean_squared_error as MSE, mean_absolute_error as MAE, r2_score as r2
 
 try:
 	from hyperopt import hp
@@ -86,9 +86,10 @@ def train_and_eval_sklearn_regressor( clf, data ):
 	mse = MSE( y_train, p )
 	rmse = sqrt( mse )
 	mae = MAE( y_train, p )
+  r2_score = r2 (y_train, p)
 
 
-	print ("\n# training | RMSE: {:.4f}, MAE: {:.4f}".format( rmse, mae ))
+	print ("\n# training | RMSE: {:.4f}, MAE: {:.4f}, R2: {:.4f}".format( rmse, mae, r2_score ))
 
 	#
 
@@ -97,7 +98,8 @@ def train_and_eval_sklearn_regressor( clf, data ):
 	mse = MSE( y_test, p )
 	rmse = sqrt( mse )
 	mae = MAE( y_test, p )
+  r2_score = r2 (y_test, p)
 
-	print ("# testing  | RMSE: {:.4f}, MAE: {:.4f}".format( rmse, mae ))	
+	print ("# testing  | RMSE: {:.4f}, MAE: {:.4f}, R2: {:.4f}".format( rmse, mae, r2_score ))	
 	
-	return { 'loss': rmse, 'rmse': rmse, 'mae': mae }
+	return { 'loss': rmse, 'rmse': rmse, 'mae': mae, 'r2': r2_score}
