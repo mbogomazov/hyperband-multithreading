@@ -1,10 +1,10 @@
 "function (and parameter space) definitions for hyperband"
 "regression with random forest"
 
-from common_defs import *
+from hyperband.common_defs import *
 
 # a dict with x_train, y_train, x_test, y_test
-from load_data_for_regression import data
+from hyperband.load_data_for_regression import data
 
 from sklearn.ensemble import RandomForestRegressor as RF
 
@@ -31,7 +31,7 @@ def get_params():
 def try_params( n_iterations, params ):
 	
 	n_estimators = int( round( n_iterations * trees_per_iteration ))
-	print "n_estimators:", n_estimators
+	print ("n_estimators:", n_estimators)
 	pprint( params )
 	
 	clf = RF( n_estimators = n_estimators, verbose = 0, n_jobs = -1, **params )
