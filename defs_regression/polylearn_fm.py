@@ -1,62 +1,104 @@
-"function (and parameter space) definitions for hyperband"
-"binary classification with polylearn FM"
+"imports and definitions shared by various defs files"
 
-from common_defs import *
+import numpy as np
 
-# a dict with x_train, y_train, x_test, y_test
-from load_data_for_regression import data
+from math import log, sqrt
+from time import time
+from pprint import pprint
 
-from polylearn import FactorizationMachineRegressor as FM
-from sklearn.preprocessing import StandardScaler, RobustScaler, MinMaxScaler, MaxAbsScaler
+from sklearn.metrics import roc_auc_score as AUC, log_loss, accuracy_score as accuracy
+from sklearn.metrics import mean_squared_error as MSE, mean_absolute_error as MAE
 
-#
-
-iters_per_iteration = 1
-
-space = {
-	'scaler': hp.choice( 's', 
-		( None, 'StandardScaler', 'RobustScaler', 'MinMaxScaler', 'MaxAbsScaler' )),	
+try:
+	from hyperopt import hp
+	from hyperopt.pyll.stochastic import sample
+except ImportError:
+	print ("In order to achieve operational capability, this programme requires hyperopt to be installed (pip install hyperopt), unless you make get_params() use something else.")
 	
-	'degree': hp.quniform( 'd', 2, 3, 1 ),
-	'n_components': hp.quniform( 'c', 1, 50, 1 ),
-	'alpha': hp.uniform( 'a', 1e-10, 2 ),
-	'beta': hp.uniform( 'b', 1e-10, 2 ), 
-	'fit_lower': hp.choice( 'flo', ( 'augment', 'explicit', None )),
-	'fit_linear': hp.choice( 'fln', ( False, True )),
-	'init_lambdas': hp.choice( 'il', ( 'ones', 'random_signs' ))
-}
+#	
 
-def get_params():
+# handle floats which should be integers
+# works with flat params
+def handle_integers( params ):
 
-	params = sample( space )
-	return handle_integers( params )
+	new_params = {}
+	for k, v in params.items():
+		if type( v ) == float and int( v ) == v:
+			new_params[k] = int( v )
+		else:
+			new_params[k] = v
+	
+	return new_params
+	
+###
 
-#
+def train_and_eval_sklearn_classifier( clf, data ):
+	
+	x_train = data['x_train']
+	y_train = data['y_train']
+	
+	x_test = data['x_test']
+	y_test = data['y_test']	
+	
+	clf.fit( x_train, y_train )	
+	
+	try:
+		p = clf.predict_proba( x_train )[:,1]	# sklearn convention
+	except IndexError:
+		p = clf.predict_proba( x_train )
 
-def try_params( n_iterations, params ):
-	
-	max_iter = int( round( n_iterations * iters_per_iteration ))
-	print "max_iter:", max_iter
-	pprint( params )
-	
-	if params['scaler']:
-		scaler = eval( "{}()".format( params['scaler'] ))
-		x_train_ = scaler.fit_transform( data['x_train'].astype( np.float64 ))
-		x_test_ = scaler.transform( data['x_test'].astype( np.float64 ))
-	else:
-		x_train_ = data['x_train'].astype( np.float64 )
-		x_test_ = data['x_test'].astype( np.float64 )
-		
-	y_train_ = data['y_train'].copy()
-	y_test_ = data['y_test'].copy()
-	
-	local_data = { 'x_train': x_train_, 'y_train': y_train_, 
-		  'x_test': x_test_ , 'y_test': y_test_ }
-	
+	ll = log_loss( y_train, p )
+	auc = AUC( y_train, p )
+	acc = accuracy( y_train, np.round( p ))
+
+	print ("\n# training | log loss: {:.2%}, AUC: {:.2%}, accuracy: {:.2%}".format( ll, auc, acc ))
+
 	#
+
+	try:
+		p = clf.predict_proba( x_test )[:,1]	# sklearn convention
+	except IndexError:
+		p = clf.predict_proba( x_test )
+
+	ll = log_loss( y_test, p )
+	auc = AUC( y_test, p )
+	acc = accuracy( y_test, np.round( p ))
+
+	print ("# testing  | log loss: {:.2%}, AUC: {:.2%}, accuracy: {:.2%}".format( ll, auc, acc ))	
 	
-	params_ = dict( params )
-	params_.pop( 'scaler' )	
+	#return { 'loss': 1 - auc, 'log_loss': ll, 'auc': auc }
+	return { 'loss': ll, 'log_loss': ll, 'auc': auc }
+
+###
+
+# "clf", even though it's a regressor
+def train_and_eval_sklearn_regressor( clf, data ):
 	
-	clf = FM( max_iter = max_iter, verbose = True, **params_ )
-	return train_and_eval_sklearn_regressor( clf, local_data )
+	x_train = data['x_train']
+	y_train = data['y_train']
+	
+	x_test = data['x_test']
+	y_test = data['y_test']	
+	
+	clf.fit( x_train, y_train )	
+	p = clf.predict( x_train )
+
+	mse = MSE( y_train, p )
+	rmse = sqrt( mse )
+	mae = MAE( y_train, p )
+
+
+	print ("\n# training | RMSE: {:.4f}, MAE: {:.4f}".format( rmse, mae ))
+
+	#
+
+	p = clf.predict( x_test )
+
+	mse = MSE( y_test, p )
+	rmse = sqrt( mse )
+	mae = MAE( y_test, p )
+
+	print ("# testing  | RMSE: {:.4f}, MAE: {:.4f}".format( rmse, mae ))	
+	
+	return { 'loss': rmse, 'rmse': rmse, 'mae': mae }
+
