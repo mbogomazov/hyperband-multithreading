@@ -1,21 +1,15 @@
 import numpy as np
+import pandas as pd
 
 file = '/content/airfoil_self_noise.csv'
 # valid_file = 'data/kin8nm/validation.csv'
 # test_file = 'data/kin8nm/test.csv'
 
-print "loading data..."
+data_2 = pd.read_csv('/content/airfoil_self_noise.csv',sep='\t')
 
-train = np.loadtxt( open( file ), delimiter = "," )
-# valid = np.loadtxt( open( valid_file ), delimiter = "," )
-#test = np.loadtxt( open( test_file ), delimiter = "," )
+X = data_2.drop('L',axis=1) # Independet variable
+y = data_2['L'] # Dependent variable
 
-y_train = train[:,-1]
-y_test = train[:,-1]
-#y_test = test[:,-1]
 
-x_train = train[:,0:-1]
-x_test = train[:,0:-1]
-#x_test = test[:,0:-1]
 
-data = { 'x_train': x_train, 'y_train': y_train, 'x_test': x_test, 'y_test': y_test }
+data = { 'x_train': X, 'y_train': y, 'x_test': X, 'y_test': y }
