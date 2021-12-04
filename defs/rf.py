@@ -4,7 +4,7 @@
 from hyperband.common_defs import *
 
 # a dict with x_train, y_train, x_test, y_test
-from hyperband.load_data_for_regression import data
+from hyperband.load_data import data
 
 from sklearn.ensemble import RandomForestClassifier as RF
 
