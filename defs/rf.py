@@ -1,10 +1,10 @@
 "function (and parameter space) definitions for hyperband"
 "binary classification with random forest"
 
-from common_defs import *
+from hyperband.common_defs import *
 
 # a dict with x_train, y_train, x_test, y_test
-from load_data import data
+from hyperband.load_data_for_regression import data
 
 from sklearn.ensemble import RandomForestClassifier as RF
 
