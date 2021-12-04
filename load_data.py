@@ -8,7 +8,7 @@ import pandas as pd
 data_2 = pd.read_csv('/content/mnist_train.csv')
 
 X = data_2.drop('label',axis=1) # Independet variable
-y = data_2['L'] # Dependent variable
+y = data_2['label'] # Dependent variable
 
 
 
