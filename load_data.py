@@ -1,21 +1,15 @@
-"""
-load your data, which should be a dictionary with
-x_train, y_train, x_test, y_test Numpy arrays
-defs files import data from here (from load_data import data)
-"""
+import numpy as np
+import pandas as pd
 
-# this particular example loads data from a pickle file
+# file = '/content/airfoil_self_noise.csv'
+# valid_file = 'data/kin8nm/validation.csv'
+# test_file = 'data/kin8nm/test.csv'
 
-import cPickle as pickle
+data_2 = pd.read_csv('/content/mnist_train.csv')
 
-data_file = 'data/classification.pkl'
+X = data_2.drop('label',axis=1) # Independet variable
+y = data_2['L'] # Dependent variable
 
-print "loading..."
 
-with open( data_file, 'rb' ) as f:
-	data = pickle.load( f )
 
-"""
-data is a dict containing numpy arrays: 
-{ 'x_train': x_train, 'y_train': y_train, 'x_test': x_test, 'y_test': y_test }
-"""
+data = { 'x_train': X, 'y_train': y, 'x_test': X, 'y_test': y }
