@@ -5,9 +5,9 @@ file = '/content/airfoil_self_noise.csv'
 # valid_file = 'data/kin8nm/validation.csv'
 # test_file = 'data/kin8nm/test.csv'
 
-data_2 = pd.read_csv('/content/airfoil_self_noise.csv')
+data_2 = pd.read_csv('/content/mnist_train.csv')
 
-X = data_2.drop('L',axis=1) # Independet variable
+X = data_2.drop('label',axis=1) # Independet variable
 y = data_2['L'] # Dependent variable
 
 
