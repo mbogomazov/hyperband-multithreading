@@ -63,7 +63,7 @@ space = {
 def get_params():
 
 	params = sample( space )
-	params = { k: v for k, v in params.items() if v is not 'default' }
+	params = { k: v for k, v in list(params.items()) if v is not 'default' }
 	return handle_integers( params )
 
 #
@@ -71,7 +71,7 @@ def get_params():
 def try_params( n_iterations, params, get_predictions = False ):
 
 	n_estimators = int( round( n_iterations * trees_per_iteration ))
-	print "n_estimators:", n_estimators
+	print("n_estimators:", n_estimators)
 	pprint( params )
 
 	model = XGB( n_estimators = n_estimators, nthread = -1, **params )

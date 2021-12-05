@@ -59,22 +59,22 @@ def get_params():
 # print hidden layers config in readable way
 def print_layers( params ):
 	for i in range( 1, params['n_layers'] + 1 ):
-		print "layer {} | size: {:>3} | activation: {:<7} | extras: {}".format( i,
+		print("layer {} | size: {:>3} | activation: {:<7} | extras: {}".format( i,
 			params['layer_{}_size'.format( i )], 
 			params['layer_{}_activation'.format( i )],
-			params['layer_{}_extras'.format( i )]['name'] ),
+			params['layer_{}_extras'.format( i )]['name'] ), end=' ')
 		if params['layer_{}_extras'.format( i )]['name'] == 'dropout':
-			print "- rate: {:.1%}".format( params['layer_{}_extras'.format( i )]['rate'] ),
-		print
+			print("- rate: {:.1%}".format( params['layer_{}_extras'.format( i )]['rate'] ), end=' ')
+		print()
 
 def print_params( params ):
-	pprint({ k: v for k, v in params.items() if not k.startswith( 'layer_' )})
+	pprint({ k: v for k, v in list(params.items()) if not k.startswith( 'layer_' )})
 	print_layers( params )
-	print	
+	print()	
 
 def try_params( n_iterations, params ):
 	
-	print "iterations:", n_iterations
+	print("iterations:", n_iterations)
 	print_params( params )
 	
 	y_train = data['y_train']
@@ -134,7 +134,7 @@ def try_params( n_iterations, params ):
 	mae = MAE( y_train, p )
 
 
-	print "\n# training | RMSE: {:.4f}, MAE: {:.4f}".format( rmse, mae )
+	print("\n# training | RMSE: {:.4f}, MAE: {:.4f}".format( rmse, mae ))
 
 	#
 
@@ -144,7 +144,7 @@ def try_params( n_iterations, params ):
 	rmse = sqrt( mse )
 	mae = MAE( y_test, p )
 
-	print "# testing  | RMSE: {:.4f}, MAE: {:.4f}".format( rmse, mae )	
+	print("# testing  | RMSE: {:.4f}, MAE: {:.4f}".format( rmse, mae ))	
 	
 	return { 'loss': rmse, 'rmse': rmse, 'mae': mae, 'early_stop': model.stop_training }
 

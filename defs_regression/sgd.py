@@ -37,7 +37,7 @@ def get_params():
 def try_params( n_iterations, params ):
 	
 	n_iterations = int( round( n_iterations ))
-	print ("n_iterations:", n_iterations)
+	print(("n_iterations:", n_iterations))
 	pprint( params )
 	
 	if params['scaler']:

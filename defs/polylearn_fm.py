@@ -36,7 +36,7 @@ def get_params():
 def try_params( n_iterations, params ):
 	
 	max_iter = int( round( n_iterations * iters_per_iteration ))
-	print "max_iter:", max_iter
+	print("max_iter:", max_iter)
 	pprint( params )
 	
 	if params['scaler']:

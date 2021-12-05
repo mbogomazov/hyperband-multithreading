@@ -47,7 +47,7 @@ def get_params():
 def try_params( n_iterations, params ):
 	
 	max_iter = int( round( n_iterations * iters_per_iteration ))
-	print "max_iter:", max_iter
+	print("max_iter:", max_iter)
 	
 	if params['scaler']:
 		scaler = eval( "{}()".format( params['scaler'] ))
@@ -72,7 +72,7 @@ def try_params( n_iterations, params ):
 	params_.pop( 'classifier' )
 	params_.update( local_params )
 	
-	print classifier
+	print(classifier)
 	pprint( params_ )	
 	
 	params_.pop( 'scaler' )	

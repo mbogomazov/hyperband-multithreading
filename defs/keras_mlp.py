@@ -55,22 +55,22 @@ def get_params():
 # print hidden layers config in readable way
 def print_layers( params ):
 	for i in range( 1, params['n_layers'] + 1 ):
-		print "layer {} | size: {:>3} | activation: {:<7} | extras: {}".format( i,
+		print("layer {} | size: {:>3} | activation: {:<7} | extras: {}".format( i,
 			params['layer_{}_size'.format( i )], 
 			params['layer_{}_activation'.format( i )],
-			params['layer_{}_extras'.format( i )]['name'] ),
+			params['layer_{}_extras'.format( i )]['name'] ), end=' ')
 		if params['layer_{}_extras'.format( i )]['name'] == 'dropout':
-			print "- rate: {:.1%}".format( params['layer_{}_extras'.format( i )]['rate'] ),
-		print
+			print("- rate: {:.1%}".format( params['layer_{}_extras'.format( i )]['rate'] ), end=' ')
+		print()
 
 def print_params( params ):
-	pprint({ k: v for k, v in params.items() if not k.startswith( 'layer_' )})
+	pprint({ k: v for k, v in list(params.items()) if not k.startswith( 'layer_' )})
 	print_layers( params )
-	print	
+	print()	
 
 def try_params( n_iterations, params ):
 	
-	print "iterations:", n_iterations
+	print("iterations:", n_iterations)
 	print_params( params )
 	
 	y_train = data['y_train']
@@ -129,7 +129,7 @@ def try_params( n_iterations, params ):
 	auc = AUC( y_train, p )
 	acc = accuracy( y_train, np.round( p ))
 
-	print "\n# training | log loss: {:.2%}, AUC: {:.2%}, accuracy: {:.2%}".format( ll, auc, acc )
+	print("\n# training | log loss: {:.2%}, AUC: {:.2%}, accuracy: {:.2%}".format( ll, auc, acc ))
 
 	#
 
@@ -139,7 +139,7 @@ def try_params( n_iterations, params ):
 	auc = AUC( y_test, p )
 	acc = accuracy( y_test, np.round( p ))
 
-	print "# testing  | log loss: {:.2%}, AUC: {:.2%}, accuracy: {:.2%}".format( ll, auc, acc )
+	print("# testing  | log loss: {:.2%}, AUC: {:.2%}, accuracy: {:.2%}".format( ll, auc, acc ))
 
 	return { 'loss': ll, 'log_loss': ll, 'auc': auc, 'early_stop': model.stop_training }
 
