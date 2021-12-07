@@ -3,7 +3,7 @@
 "bare-bones demonstration of using hyperband to tune sklearn GBT"
 
 from hyperband import Hyperband
-from defs.gb import get_params, try_params
+from models.classification.gb import get_params, try_params
 
 hb = Hyperband( get_params, try_params )
 
