@@ -1,5 +1,5 @@
 # meta classifier
-from common_defs import *
+from hyperband.common_defs import *
 
 models = ( 'xgb', 'gb', 'rf', 'xt', 'sgd', 'polylearn_fm', 'polylearn_pn', 'keras_mlp' )
 
@@ -21,7 +21,6 @@ def try_params( n_iterations, params ):
 	params_ = dict( params )
 	m = params_.pop( 'model' )
 	print(m)
-	
+
 	return eval( "try_params_{}( n_iterations, params_ )".format( m ))
-			 
-	
+

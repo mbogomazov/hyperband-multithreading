@@ -1,5 +1,5 @@
 "function (and parameter space) definitions for hyperband"
-"binary classification with polylearn FM/PN"
+"binary classification with polylearn FM"
 
 from common_defs import *
 
@@ -7,7 +7,6 @@ from common_defs import *
 from load_data import data
 
 from polylearn import FactorizationMachineClassifier as FM
-from polylearn import PolynomialNetworkClassifier as PN
 from sklearn.preprocessing import StandardScaler, RobustScaler, MinMaxScaler, MaxAbsScaler
 
 #
@@ -15,26 +14,16 @@ from sklearn.preprocessing import StandardScaler, RobustScaler, MinMaxScaler, Ma
 iters_per_iteration = 1
 
 space = {
-	'scaler': hp.choice( 's', 
-		( None, 'StandardScaler', 'RobustScaler', 'MinMaxScaler', 'MaxAbsScaler' )),	
-	
-	'classifier': hp.choice( 'c', (
-		{ 'name': 'FM', 
-		  'local_params': {
-			'alpha': hp.uniform( 'a', 1e-10, 2 ),
-			'fit_linear': hp.choice( 'fln', ( False, True )),
-			'fit_lower': hp.choice( 'flo', ( 'augment', 'explicit', None )),
-			'init_lambdas': hp.choice( 'il', ( 'ones', 'random_signs' ))
-		}},
-		{ 'name': 'PN', 
-		  'local_params': {
-			'fit_lower': hp.choice( 'flo', ( 'augment', None ))
-		}}
-	)),
+	'scaler': hp.choice( 's',
+		( None, 'StandardScaler', 'RobustScaler', 'MinMaxScaler', 'MaxAbsScaler' )),
+
 	'degree': hp.quniform( 'd', 2, 3, 1 ),
 	'n_components': hp.quniform( 'c', 1, 20, 1 ),
-	'beta': hp.uniform( 'b', 1e-10, 2 ), 
-	
+	'alpha': hp.uniform( 'a', 1e-10, 2 ),
+	'beta': hp.uniform( 'b', 1e-10, 2 ),
+	'fit_lower': hp.choice( 'flo', ( 'augment', 'explicit', None )),
+	'fit_linear': hp.choice( 'fln', ( False, True )),
+	'init_lambdas': hp.choice( 'il', ( 'ones', 'random_signs' ))
 }
 
 def get_params():
@@ -45,10 +34,11 @@ def get_params():
 #
 
 def try_params( n_iterations, params ):
-	
+
 	max_iter = int( round( n_iterations * iters_per_iteration ))
 	print("max_iter:", max_iter)
-	
+	pprint( params )
+
 	if params['scaler']:
 		scaler = eval( "{}()".format( params['scaler'] ))
 		x_train_ = scaler.fit_transform( data['x_train'].astype( np.float64 ))
@@ -56,28 +46,17 @@ def try_params( n_iterations, params ):
 	else:
 		x_train_ = data['x_train'].astype( np.float64 )
 		x_test_ = data['x_test'].astype( np.float64 )
-		
+
 	y_train_ = data['y_train'].copy()
 	y_test_ = data['y_test'].copy()
-	
-	local_data = { 'x_train': x_train_, 'y_train': y_train_, 
-		  'x_test': x_test_ , 'y_test': y_test_ }
-	
-	#
-	
-	classifier = params['classifier']['name']
-	local_params = params['classifier']['local_params']
-	
-	params_ = dict( params )
-	params_.pop( 'classifier' )
-	params_.update( local_params )
-	
-	print(classifier)
-	pprint( params_ )	
-	
-	params_.pop( 'scaler' )	
 
-	
-	clf = eval( "{}( max_iter = max_iter, loss = 'logistic', verbose = True, \
-		**params_ )".format( classifier ))
+	local_data = { 'x_train': x_train_, 'y_train': y_train_,
+		  'x_test': x_test_ , 'y_test': y_test_ }
+
+	#
+
+	params_ = dict( params )
+	params_.pop( 'scaler' )
+
+	clf = FM( max_iter = max_iter, loss = 'logistic', verbose = True, **params_ )
 	return train_and_eval_sklearn_classifier( clf, local_data )
