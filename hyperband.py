@@ -40,10 +40,11 @@ class Hyperband:
         early_stops_backup = []
         val_losses_backup = []
         s_backup = None
-        i_backup = 0
+        i_backup = None
         counter_backup = 0
         T_backup = []
         chunk_offset_backup = None
+        finished_threads_backup = None
 
         if backup_filename and os.path.isfile(backup_filename):
             with open(backup_filename, 'rb') as f:
@@ -58,12 +59,13 @@ class Hyperband:
                 i_backup = last_state['i']
                 chunk_offset_backup = last_state['chunk_offset']
                 counter_backup = last_state['counter']
+                finished_threads_backup = last_state['finished_threads_backup']
                 self.counter = counter_backup
                 self.results = results_backup
                 self.best_counter = best_counter_backup
                 self.best_loss = best_loss_backup
-                self.best_accuracy = last_state.get('best_accuracy', 0)
-                self.best_params = last_state.get('best_params', {})
+                self.best_accuracy = last_state['best_accuracy']
+                self.best_params = last_state['best_params']
                 print('Last session state restored!')
                 sleep(2)
 
@@ -79,7 +81,12 @@ class Hyperband:
             if T_backup:
                 T_backup = []
 
-            for i in range(i_backup, (s + 1)):
+            for i in range(s + 1):
+                if i_backup != None and i < i_backup:
+                    continue
+                else:
+                    i_backup = None
+
                 self.n_configs = n * self.eta ** ( -i )
                 self.n_iterations = r * self.eta ** ( i )
 
@@ -94,11 +101,17 @@ class Hyperband:
                 for chunk_offset, ch in enumerate(chunks_list):
                     if chunk_offset_backup != None and chunk_offset < chunk_offset_backup:
                         continue
+                    else:
+                        chunk_offset_backup = None
+
                     threads = []
                     self.finished_threads = 0
                     self.print_progress(chunk_offset, len(chunks_list))
-                    for task in ch:
-
+                    for task_offset, task in enumerate(ch):
+                        if finished_threads_backup != None and task_offset < finished_threads_backup:
+                            continue
+                        else:
+                            finished_threads_backup = None
                         t = Thread(target=self.try_params_in_thread, args=(task, backup_filename, s, i, T, chunk_offset, len(chunks_list)))
                         t.start()
                         threads.append(t)
@@ -133,7 +146,8 @@ class Hyperband:
             'T': T,
             'chunk_offset': chunk_offset,
             'best_accuracy': self.best_accuracy,
-            'best_params': self.best_params
+            'best_params': self.best_params,
+            'finished_threads': self.finished_threads
         }
         with open(backup_filename, 'wb') as f:
             pickle.dump(cur_state, f)

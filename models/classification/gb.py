@@ -3,7 +3,7 @@
 
 from pprint import pprint
 from sklearn.ensemble import GradientBoostingClassifier as GB
-from models.classification.base_classification_model import BaseClassificationModel
+from base_classification_model import BaseClassificationModel
 
 class HBGradientBoostingClassifier(BaseClassificationModel):
 	trees_per_iteration = 5

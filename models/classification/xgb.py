@@ -4,7 +4,7 @@
 from numpy import log
 from pprint import pprint
 from xgboost import XGBClassifier as XGB
-from models.classification.base_classification_model import BaseClassificationModel
+from base_classification_model import BaseClassificationModel
 
 class HBXGBoostClassification(BaseClassificationModel):
 	trees_per_iteration = 5
