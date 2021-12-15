@@ -1,9 +1,5 @@
-import numpy as np
-from math import sqrt
-from sklearn.metrics import roc_auc_score as AUC, log_loss, accuracy_score as accuracy
-from sklearn.metrics import mean_squared_error as MSE, mean_absolute_error as MAE, r2_score as r2
-from hyperopt import hp
-from hyperopt.pyll.stochastic import sample
+import pandas as pd
+from sklearn.model_selection import train_test_split
 
 
 class BaseModel(object):
@@ -16,3 +12,10 @@ class BaseModel(object):
                 new_params[k] = v
 
         return new_params
+
+    def load_and_split_data(filepath):
+        data_train = pd.read_csv(filepath)
+        X = data_train.drop('label',axis=1) # Independet variable
+        y = data_train['label'] # Dependent variable
+        X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.2,random_state=23)
+        return { 'x_train': X_train, 'y_train': y_train, 'x_test': X_test, 'y_test': y_test}

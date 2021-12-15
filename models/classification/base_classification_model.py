@@ -5,7 +5,7 @@ from sklearn.metrics import roc_auc_score as AUC, log_loss, accuracy_score as ac
 from sklearn.metrics import mean_squared_error as MSE, mean_absolute_error as MAE, r2_score as r2
 from hyperopt import hp as HP
 from hyperopt.pyll.stochastic import sample
-from hyperband.models.base_model import BaseModel
+from models.base_model import BaseModel
 
 
 class BaseClassificationModel(BaseModel):
@@ -35,7 +35,7 @@ class BaseClassificationModel(BaseModel):
         auc = AUC(y_train, p, multi_class='ovo')
         acc = accuracy(y_train_acc, np.round(p))
 
-        print(("\n# training | log loss: {:.2%}, AUC: {:.2%}, accuracy: {:.2%}".format( ll, auc, acc )))
+        # print(("\n# training | log loss: {:.2%}, AUC: {:.2%}, accuracy: {:.2%}".format( ll, auc, acc )))
 
 
         # try:
@@ -47,9 +47,9 @@ class BaseClassificationModel(BaseModel):
         auc = AUC(y_test, p, multi_class='ovo')
         acc = accuracy(y_test_acc, np.round(p))
 
-        print(("# testing  | log loss: {:.2%}, AUC: {:.2%}, accuracy: {:.2%}".format( ll, auc, acc )))
+        # print(("# testing  | log loss: {:.2%}, AUC: {:.2%}, accuracy: {:.2%}".format( ll, auc, acc )))
 
-        return { 'loss': ll, 'log_loss': ll, 'auc': auc }
+        return { 'loss': ll, 'log_loss': ll, 'auc': auc, 'acc': acc }
 
     def get_params(self):
         params = sample(self.__space)

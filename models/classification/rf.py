@@ -1,10 +1,9 @@
 "function (and parameter space) definitions for hyperband"
 "binary classification with random forest"
 
-from hyperband.common_defs import *
 from pprint import pprint
 from sklearn.ensemble import RandomForestClassifier as RF
-from hyperband.models.classification.base_classification_model import BaseClassificationModel
+from models.classification.base_classification_model import BaseClassificationModel
 
 class HBRandomForestClassifier(BaseClassificationModel):
 	trees_per_iteration = 5
@@ -23,8 +22,8 @@ class HBRandomForestClassifier(BaseClassificationModel):
 		super().__init__(data, self.__space)
 
 	def try_params(self, n_iterations, params):
-		n_estimators = int( round( n_iterations * self.trees_per_iteration ))
-		print(("n_estimators:", n_estimators))
-		pprint(params)
+		n_estimators = int(round(n_iterations * self.trees_per_iteration))
+		# print(("n_estimators:", n_estimators))
+		# pprint(params)
 		model = RF( n_estimators = n_estimators, verbose = 0, n_jobs = -1, **params )
 		return self.train_and_eval_model(model)
