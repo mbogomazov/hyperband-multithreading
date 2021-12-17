@@ -3,7 +3,7 @@ from sklearn.metrics import roc_auc_score as AUC, log_loss, accuracy_score as ac
 from sklearn.metrics import mean_squared_error as MSE, mean_absolute_error as MAE, r2_score as r2
 from hyperopt import hp as HP
 from hyperopt.pyll.stochastic import sample
-from ..base_model import BaseModel
+from .base_model import BaseModel
 
 
 class BaseRegressionModel(BaseModel):

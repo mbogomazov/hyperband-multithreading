@@ -3,7 +3,7 @@
 
 from pprint import pprint
 from sklearn.ensemble import RandomForestClassifier as RF
-from base_classification_model import BaseClassificationModel
+from models.base_classification_model import BaseClassificationModel
 
 class HBRandomForestClassifier(BaseClassificationModel):
 	trees_per_iteration = 5
