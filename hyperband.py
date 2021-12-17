@@ -1,9 +1,8 @@
 from IPython.display import clear_output
 import pickle, os.path, numpy as np
 from threading import Thread, Lock
-from random import random
 from math import log, ceil
-from time import sleep, time, ctime
+from time import sleep, time
 from itertools import islice
 from pprint import pprint
 
